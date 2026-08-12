@@ -43,11 +43,11 @@
 2. Склонируйте репозиторий или скачайте файлы.
 3. Установите зависимости:
 ```
-   pip install PyQt5
+pip install PyQt5
 ```
 4. Запустите программу:
 ```
-   python kenshi_simple_mod_manager.py
+python kenshi_simple_mod_manager.py
 ```
 ## Сборка в исполняемый файл (.exe)
 
@@ -55,15 +55,11 @@
 
 1. Установите PyInstaller:
 ```
-   pip install pyinstaller
+pip install pyinstaller
 ```
 2. Выполните команду (для Windows):
 ```
-   pyinstaller --onefile --windowed --name KenshiSimpleModManager \
-       --icon=icons/ksmm.ico \
-       --add-data "icons;icons" \
-       --add-data "fonts;fonts" \
-       kenshi_simple_mod_manager.py
+pyinstaller --onefile --windowed --name KenshiSimpleModManager --icon=icons/ksmm.ico --add-data "icons;icons" --add-data "fonts;fonts" kenshi_simple_mod_manager.py
 ```
    Пояснения:
    - `--onefile` – собрать всё в один exe.
