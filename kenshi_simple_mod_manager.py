@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QStyle, QStyleFactory, QMenuBar, QAction, QStyledItemDelegate,
                              QStyleOptionViewItem, QToolTip, QSizePolicy, QLineEdit, QDialog,
                              QLabel, QDialogButtonBox)
-from PyQt5.QtCore import Qt, QTimer, QRect, QSize, QPoint, pyqtSignal, QUrl
+from PyQt5.QtCore import Qt, QTimer, QRect, QSize, QPoint, pyqtSignal, QUrl, QSettings
 from PyQt5.QtGui import (QIcon, QPixmap, QPainter, QPen, QColor, QFontDatabase,
                          QFont, QBrush, QPalette, QCursor)
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
@@ -754,7 +754,10 @@ def read_mod_info(folder_path):
 class ModManager(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.current_lang = 'ru'
+        # Инициализация QSettings для сохранения языка
+        self.settings = QSettings("p4vl0-dev", "KenshiSimpleModManager")
+        saved_lang = self.settings.value("language", "ru")
+        self.current_lang = saved_lang if saved_lang in LANGUAGES else "ru"
         self.str = LANGUAGES[self.current_lang]
         self.current_version = get_file_version(sys.argv[0]) or "dev"
         self.setWindowTitle(f"{self.str['window_title']} v{self.current_version}")
@@ -1055,6 +1058,7 @@ class ModManager(QMainWindow):
     # ========== Локализация ==========
     def toggle_language(self):
         self.current_lang = 'en' if self.current_lang == 'ru' else 'ru'
+        self.settings.setValue("language", self.current_lang)
         self.str = LANGUAGES[self.current_lang]
         self.update_ui_texts()
         self.build_list(self.enabled_list, self.disabled_list)
