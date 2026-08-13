@@ -73,7 +73,7 @@
 3. Ensure that the icons and fonts folders are in the project root (containing the required files).
 4. Build the executable:
    ```bash
-   pyinstaller --onefile --windowed --clean --name KenshiSimpleModManager --icon=icons/ksmm.ico --add-data "icons;icons" --add-data "fonts;fonts" kenshi_simple_mod_manager.py
+   pyinstaller --onefile --windowed --clean --name KenshiSimpleModManager --icon=icons/ksmm.ico --version-file=version.txt --add-data "icons;icons" --add-data "fonts;fonts" kenshi_simple_mod_manager.py
    ```
 The finished KenshiSimpleModManager.exe will appear in the dist folder.
 
