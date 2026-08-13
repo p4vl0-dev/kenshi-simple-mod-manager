@@ -12,9 +12,77 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QStyle, QStyleFactory, QMenuBar, QAction, QStyledItemDelegate,
                              QStyleOptionViewItem, QToolTip, QSizePolicy, QLineEdit, QDialog,
                              QLabel, QDialogButtonBox)
-from PyQt5.QtCore import Qt, QTimer, QRect, QSize, QPoint, pyqtSignal
+from PyQt5.QtCore import Qt, QTimer, QRect, QSize, QPoint, pyqtSignal, QUrl
 from PyQt5.QtGui import (QIcon, QPixmap, QPainter, QPen, QColor, QFontDatabase,
                          QFont, QBrush, QPalette, QCursor)
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
+import ctypes
+import ctypes.wintypes
+
+# ========== Функции для работы с версиями ==========
+def get_file_version(file_path):
+    """Возвращает строку версии файла (major.minor.patch) или None."""
+    try:
+        size = ctypes.windll.version.GetFileVersionInfoSizeW(file_path, None)
+        if size == 0:
+            return None
+        buffer = ctypes.create_string_buffer(size)
+        ctypes.windll.version.GetFileVersionInfoW(file_path, 0, size, buffer)
+
+        class VS_FIXEDFILEINFO(ctypes.Structure):
+            _fields_ = [
+                ("dwSignature", ctypes.c_uint),
+                ("dwStrucVersion", ctypes.c_uint),
+                ("dwFileVersionMS", ctypes.c_uint),
+                ("dwFileVersionLS", ctypes.c_uint),
+                ("dwProductVersionMS", ctypes.c_uint),
+                ("dwProductVersionLS", ctypes.c_uint),
+                ("dwFileFlagsMask", ctypes.c_uint),
+                ("dwFileFlags", ctypes.c_uint),
+                ("dwFileOS", ctypes.c_uint),
+                ("dwFileType", ctypes.c_uint),
+                ("dwFileSubtype", ctypes.c_uint),
+                ("dwFileDateMS", ctypes.c_uint),
+                ("dwFileDateLS", ctypes.c_uint),
+            ]
+
+        ptr = ctypes.c_void_p()
+        ctypes.windll.version.VerQueryValueW(buffer, "\\", ctypes.byref(ptr), ctypes.byref(ctypes.c_uint()))
+        info = ctypes.cast(ptr, ctypes.POINTER(VS_FIXEDFILEINFO)).contents
+
+        major = (info.dwFileVersionMS >> 16) & 0xFFFF
+        minor = info.dwFileVersionMS & 0xFFFF
+        patch = (info.dwFileVersionLS >> 16) & 0xFFFF
+        # build = info.dwFileVersionLS & 0xFFFF
+        return f"{major}.{minor}.{patch}"
+    except Exception:
+        return None
+
+def parse_version(v):
+    """Преобразует строку версии в кортеж целых чисел."""
+    parts = v.split('.')
+    return tuple(int(p) for p in parts[:3])
+
+def compare_versions(v1, v2):
+    """
+    Сравнивает две версии.
+    Возвращает:
+        1, если v1 > v2
+        -1, если v1 < v2
+        0, если равны
+    """
+    t1 = parse_version(v1)
+    t2 = parse_version(v2)
+    for a, b in zip(t1, t2):
+        if a > b:
+            return 1
+        elif a < b:
+            return -1
+    if len(t1) > len(t2):
+        return 1
+    elif len(t1) < len(t2):
+        return -1
+    return 0
 
 # ========== Словари локализации ==========
 LANGUAGES = {
@@ -31,7 +99,6 @@ LANGUAGES = {
         'menu_help': 'Справка',
         'menu_about': 'О программе',
         'about_text': (
-            'Kenshi Simple Mod Manager v1.0\n\n'
             'Упрощённый менеджер модов для Kenshi.\n\n'
             'Возможности:\n'
             '• Включать/выключать моды (ПКМ по моду)\n'
@@ -102,6 +169,8 @@ LANGUAGES = {
         'backup_filter': 'CFG Files (*.cfg);;All Files (*)',
         'yes': 'Да',
         'no': 'Нет',
+        'update_available_title': 'Доступно обновление',
+        'update_available_text': 'Доступна новая версия {version}.\n\nВы хотите перейти на страницу загрузки?',
     },
     'en': {
         'window_title': 'Kenshi Simple Mod Manager',
@@ -116,7 +185,6 @@ LANGUAGES = {
         'menu_help': 'Help',
         'menu_about': 'About',
         'about_text': (
-            'Kenshi Simple Mod Manager v1.0\n\n'
             'Simplified mod manager for Kenshi.\n\n'
             'Features:\n'
             '• Enable/disable mods (right‑click on mod)\n'
@@ -187,6 +255,8 @@ LANGUAGES = {
         'backup_filter': 'CFG Files (*.cfg);;All Files (*)',
         'yes': 'Yes',
         'no': 'No',
+        'update_available_title': 'Update available',
+        'update_available_text': 'A new version {version} is available.\n\nDo you want to go to the download page?',
     }
 }
 
@@ -686,7 +756,8 @@ class ModManager(QMainWindow):
         super().__init__()
         self.current_lang = 'ru'
         self.str = LANGUAGES[self.current_lang]
-        self.setWindowTitle(self.str['window_title'])
+        self.current_version = get_file_version(sys.argv[0]) or "dev"
+        self.setWindowTitle(f"{self.str['window_title']} v{self.current_version}")
         self.setMinimumSize(750, 700)
 
         icon_path = self.find_resource("ksmm.ico")
@@ -978,6 +1049,9 @@ class ModManager(QMainWindow):
         else:
             self.statusBar().showMessage(self.str['status_paths_not_set'])
 
+        # Запуск проверки обновлений через 1.5 секунды после инициализации
+        QTimer.singleShot(1500, self.check_for_updates)
+
     # ========== Локализация ==========
     def toggle_language(self):
         self.current_lang = 'en' if self.current_lang == 'ru' else 'ru'
@@ -986,7 +1060,7 @@ class ModManager(QMainWindow):
         self.build_list(self.enabled_list, self.disabled_list)
 
     def update_ui_texts(self):
-        self.setWindowTitle(self.str['window_title'])
+        self.setWindowTitle(f"{self.str['window_title']} v{self.current_version}")
         self.file_menu.setTitle(self.str['menu_file'])
         self.action_load_cfg.setText(self.str['menu_load_cfg'])
         self.action_backup.setText(self.str['menu_backup'])
@@ -1007,7 +1081,8 @@ class ModManager(QMainWindow):
         self.check_if_modified()
 
     def show_about(self):
-        QMessageBox.about(self, self.str['menu_about'], self.str['about_text'])
+        about_text = f"Kenshi Simple Mod Manager v{self.current_version}\n\n{self.str['about_text']}"
+        QMessageBox.about(self, self.str['menu_about'], about_text)
 
     # ========== Поиск ==========
     def on_search(self, text):
@@ -1824,6 +1899,47 @@ class ModManager(QMainWindow):
         msg.setDefaultButton(btn_yes)
         msg.exec_()
         return msg.clickedButton() == btn_yes
+
+    # ========== Проверка обновлений ==========
+    def check_for_updates(self):
+        """Проверяет наличие обновлений на GitHub."""
+        exe_path = sys.argv[0]
+        current_version = get_file_version(exe_path)
+        if current_version is None:
+            return
+
+        self.manager = QNetworkAccessManager()
+        url = QUrl("https://api.github.com/repos/p4vl0-dev/kenshi-simple-mod-manager/releases/latest")
+        request = QNetworkRequest(url)
+        reply = self.manager.get(request)
+
+        def handle_reply():
+            if reply.error() == QNetworkReply.NoError:
+                data = reply.readAll().data().decode('utf-8')
+                try:
+                    release = json.loads(data)
+                    latest_tag = release.get('tag_name', '')
+                    if latest_tag.startswith('v'):
+                        latest_tag = latest_tag[1:]
+                    if latest_tag and compare_versions(latest_tag, current_version) > 0:
+                        self.show_update_dialog(latest_tag)
+                except Exception:
+                    pass
+            reply.deleteLater()
+
+        reply.finished.connect(handle_reply)
+
+    def show_update_dialog(self, latest_version):
+        """Показывает диалог о доступном обновлении."""
+        msg = QMessageBox(self)
+        msg.setWindowTitle(self.str['update_available_title'])
+        msg.setText(self.str['update_available_text'].format(version=latest_version))
+        btn_yes = msg.addButton(self.str['yes'], QMessageBox.YesRole)
+        btn_no = msg.addButton(self.str['no'], QMessageBox.NoRole)
+        msg.setDefaultButton(btn_yes)
+        msg.exec_()
+        if msg.clickedButton() == btn_yes:
+            webbrowser.open("https://github.com/p4vl0-dev/kenshi-simple-mod-manager/releases")
 
 # ========== ТОЧКА ВХОДА ==========
 def main():
