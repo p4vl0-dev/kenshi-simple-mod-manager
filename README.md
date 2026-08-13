@@ -86,7 +86,6 @@ kenshi-simple-mod-manager/
 │   ├── warning.webp               # Иконка предупреждения (ошибки/дубликаты)
 │   └── github.webp                # Иконка GitHub
 ├── fonts/                         # Кастомные шрифты (опционально)
-│   ├── Kenshi.ttf
 │   └── Exo2-Bold.ttf
 └── README.md
 ```
