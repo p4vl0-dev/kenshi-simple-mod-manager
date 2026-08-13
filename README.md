@@ -1,101 +1,104 @@
-# Kenshi Simple Mod Manager v1.0
+# Kenshi Simple Mod Manager
 
-Упрощённый менеджер модов для игры Kenshi. Позволяет управлять списком активных модов, изменять порядок загрузки, включать/выключать моды, запускать игру и делать резервные копии конфигурации.
+**A simple yet powerful mod manager for Kenshi with Steam Workshop support and a user-friendly interface.**
 
-## Возможности
+![Kenshi Mod Manager](icons/ksmm.ico)
 
-- Автоматическое определение папки игры и Workshop (Steam).
-- Загрузка списка модов из `mods.cfg` с сохранением исходного порядка.
-- Отображение включённых и выключенных модов в двух секциях.
-- Перетаскивание модов для изменения порядка загрузки.
-- Включение/выключение модов щелчком или через контекстное меню.
-- Поиск модов по названию или заголовку из info‑файла.
-- Показ иконок:
-  - **Steam** — мод из мастерской, клик открывает страницу в Workshop.
-  - **Папка** — локальный мод, клик открывает папку мода.
-  - **⚠ Дубликат** — обнаружены копии мода (локальная и Workshop), клик показывает список дубликатов.
-- Всплывающие подсказки для иконок и названий (включая конфликты зависимостей).
-- Подсветка модов с отсутствующими или неправильно расположенными зависимостями.
-- Резервное копирование `mods.cfg` вручную или автоматически при сохранении.
-- Запуск игры (kenshi_x64.exe) прямо из менеджера.
-- Локализация интерфейса на русском и английском языках.
-- Диагностический отчёт о найденных модах и дубликатах.
-- Тёмная тема оформления в стиле Kenshi.
+## 🎯 What is this?
 
-## Преимущества
+**Kenshi Simple Mod Manager** is a desktop application for managing mods in the game Kenshi. It replaces the standard launcher by providing a more convenient and informative interface for enabling/disabling mods, changing load order, checking conflicts, and working with mods from Steam Workshop.
 
-- **Простота** – интуитивный интерфейс без лишних действий.
-- **Безопасность** – перед сохранением можно сделать бэкап конфигурации, чтобы не потерять рабочий список.
-- **Полный контроль** – видно и включённые, и выключенные моды, легко менять их местами.
-- **Работа с дубликатами** – программа предупреждает, если один и тот же мод есть и локально, и в Workshop.
-- **Удобный поиск** – можно быстро найти нужный мод среди сотен.
-- **Кроссплатформенная база** – написана на Python и PyQt5, работает на Windows (основная цель), Linux и macOS (с ограничениями, связанными с путями Steam).
+## ⚡ Features
 
-## Требования
+- **Full mod control**
+  - Enable/disable mods (right-click on a mod → instant toggle)
+  - Drag-and-drop to change load order within "Enabled" / "Disabled" sections
+  - Save order to `mods.cfg` with optional backup before saving
 
-- **Операционная система:** Windows 7/10/11 (для других ОС потребуется адаптация путей Steam).
-- **Python 3.6 или новее** (если запуск из исходников).
-- **Библиотека PyQt5** (устанавливается через pip).
+- **Steam Workshop integration**
+  - Automatically scans mods from `workshop/content/233860`
+  - Displays mod title from `.info` file (if available) and `.mod` filename
+  - Opens mod page in Workshop by clicking the Steam icon
 
-## Установка из исходников
+- **Load profiles**
+  - Save current enabled mod order to a separate `.cfg` file
+  - Quick load of saved profile (temporary application without changing main `mods.cfg`)
 
-1. Убедитесь, что установлен Python 3.6+.
-2. Склонируйте репозиторий или скачайте файлы.
-3. Установите зависимости:
+- **Backup & restore**
+  - Manual backup of `mods.cfg` to any location
+  - Automatic backup with timestamp when choosing "Save with backup"
+
+- **Search and navigation**
+  - Quick search by mod name and by title from `.info` (highlight matches)
+  - ▲▼ buttons to navigate through search results
+
+- **Localization**
+  - Russian and English languages (toggle button in top‑right corner)
+
+- **Full diagnostics**
+  - Diagnostic window with paths to game, number of mods, duplicates, etc.
+
+- **Launch game**
+  - One-click launch Kenshi via Steam (with authentication) or directly
+
+## 📥 Installation
+
+### Pre‑built binary (recommended)
+
+1. Go to the [Releases page](https://github.com/p4vl0-dev/kenshi-simple-mod-manager/releases)
+2. Download `KenshiSimpleModManager.exe`
+3. Place it in any folder (does not have to be next to the game)
+4. Run `KenshiSimpleModManager.exe`
+
+> **Important:** On first launch, the program will attempt to find Kenshi automatically (via Steam registry and standard paths). If it fails, you can manually set the path via **View → Set Kenshi path**.
+
+## 🔧 Building from source
+
+### Requirements
+- Python 3.6+
+- PyQt5
+- PyInstaller
+
+### Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/p4vl0-dev/kenshi-simple-mod-manager.git
+   cd kenshi-simple-mod-manager
+   ```
+2. Install dependencies:
+   ```bash
+   pip install PyQt5
+   pip install pyinstaller
+   ```
+3. Ensure that the icons and fonts folders are in the project root (containing the required files).
+4. Build the executable:
+   ```bash
+   pyinstaller --onefile --windowed --clean --name KenshiSimpleModManager --icon=icons/ksmm.ico --add-data "icons;icons" --add-data "fonts;fonts" kenshi_simple_mod_manager.py
+   ```
+The finished KenshiSimpleModManager.exe will appear in the dist folder.
+
+## 📁 Project structure
+
+```text
+kenshi-simple-mod-manager/
+├── kenshi_simple_mod_manager.py   # Main script
+├── icons/                         # Icons for the interface
+│   ├── ksmm.ico                   # Application icon
+│   ├── steam_tray.ico             # Steam icon
+│   ├── folder.webp                # Folder icon (local mods)
+│   ├── warning.webp               # Warning icon (duplicates/errors)
+│   └── github.webp                # GitHub icon
+├── fonts/                         # Fonts (optional)
+│   ├── Kenshi.ttf
+│   └── Exo2-Bold.ttf
+└── README.md
 ```
-pip install PyQt5
-```
-4. Запустите программу:
-```
-python kenshi_simple_mod_manager.py
-```
-## Сборка в исполняемый файл (.exe)
 
-Для создания автономного приложения используйте **PyInstaller**.
+## 📜 License
 
-1. Установите PyInstaller:
-```
-pip install pyinstaller
-```
-2. Выполните команду (для Windows):
-```
-pyinstaller --onefile --windowed --name KenshiSimpleModManager --icon=icons/ksmm.ico --add-data "icons;icons" --add-data "fonts;fonts" kenshi_simple_mod_manager.py
-```
-   Пояснения:
-   - `--onefile` – собрать всё в один exe.
-   - `--windowed` – без консольного окна.
-   - `--icon` – иконка приложения (если есть).
-   - `--add-data` – добавление папок с иконками и шрифтами в билд (разделитель `;` для Windows, `:` для Linux/macOS).
-   - В результирующей папке `dist` появится `KenshiSimpleModManager.exe`.
+This project is distributed under the MIT license.  
+In short: you may use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software without restriction, provided that the copyright notice is retained. See the LICENSE file for details.
 
-Для **Linux/macOS** замените разделитель в `--add-data` на `:` и используйте подходящую иконку.
+## 🛠️ Support
 
-## Использование
-
-1. При первом запуске программа попытается автоматически найти папку Kenshi (через Steam).
-2. Если игра не найдена, используйте меню **Вид → Указать путь к Kenshi** и выберите корневую папку игры (содержащую `data/mods.cfg`).
-3. После загрузки появятся две секции: **Включенные моды** и **Выключенные моды**.
-4. **Изменение порядка** – перетащите мод внутри секции включённых.
-5. **Включение/выключение** – щёлкните по моду (или через контекстное меню по пустому месту).
-6. **Сохранение** – кнопка **Сохранить порядок** (станет активной после изменений). При сохранении можно выбрать:
-   - просто сохранить,
-   - сохранить с автоматическим бэкапом.
-7. **Запуск игры** – кнопка **Запустить игру**.
-
-## Диагностика
-
-Через меню **Вид → Диагностика** можно получить отчёт о количестве найденных модов, дубликатах и других параметрах.
-
-## Устранение неполадок
-
-- **Не найден mods.cfg** – укажите путь к игре вручную.
-- **Не отображаются моды из Workshop** – проверьте, что Steam‑клиент установлен и Workshop‑контент для Kenshi загружен.
-- **Ошибка при сохранении** – убедитесь, что файл `mods.cfg` не открыт в другой программе и у вас есть права на запись.
-
-## Лицензия
-
-Проект распространяется под лицензией MIT. Подробнее см. файл [LICENSE](LICENSE).
-
----
-
-**Примечание:** Программа не изменяет сами файлы модов, она лишь управляет списком в `mods.cfg`. Всегда делайте резервные копии важных данных.
+If you find a bug or have a suggestion, create an [Issue](https://github.com/p4vl0-dev/kenshi-simple-mod-manager/issues).
