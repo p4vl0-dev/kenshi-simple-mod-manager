@@ -1,104 +1,100 @@
 # Kenshi Simple Mod Manager
 
-**A simple yet powerful mod manager for Kenshi with Steam Workshop support and a user-friendly interface.**
+**Простой, но мощный менеджер модов для Kenshi с поддержкой Мастерской Steam и удобным пользовательским интерфейсом.**
 
 ![Kenshi Mod Manager](icons/ksmm.ico)
 
-## 🎯 What is this?
+## 🎯 Что это такое?
 
-**Kenshi Simple Mod Manager** is a desktop application for managing mods in the game Kenshi. It replaces the standard launcher by providing a more convenient and informative interface for enabling/disabling mods, changing load order, checking conflicts, and working with mods from Steam Workshop.
+**Kenshi Simple Mod Manager** — это десктопное приложение для управления модами в игре Kenshi. Оно полностью заменяет стандартный лаунчер, предоставляя гораздо более удобный и информативный интерфейс для включения/выключения модов, изменения порядка загрузки.
 
-## ⚡ Features
+## ⚡ Особенности
 
-- **Full mod control**
-  - Enable/disable mods (right-click on a mod → instant toggle)
-  - Drag-and-drop to change load order within "Enabled" / "Disabled" sections
-  - Save order to `mods.cfg` with optional backup before saving
+- **Полный контроль над модами**
+  - Включение и выключение модов в один клик (нажатие ПКМ по моду → мгновенное переключение статуса)
+  - Перетаскивание (Drag-and-drop) для удобного изменения порядка загрузки внутри списков «Включено» и «Выключено»
+  - Сохранение измененного списка в `mods.cfg` с возможностью автоматического создания резервной копии
 
-- **Steam Workshop integration**
-  - Automatically scans mods from `workshop/content/233860`
-  - Displays mod title from `.info` file (if available) and `.mod` filename
-  - Opens mod page in Workshop by clicking the Steam icon
+- **Интеграция со Steam Workshop**
+  - Автоматическое сканирование установленных модов из папки Мастерской `workshop/content/233860`
+  - Отображение реального названия мода из файла `.info` (если он доступен) вместе с именем файла `.mod`
+  - Быстрый переход на страницу мода в Мастерской Steam по клику на иконку Steam
 
-- **Load profiles**
-  - Save current enabled mod order to a separate `.cfg` file
-  - Quick load of saved profile (temporary application without changing main `mods.cfg`)
+- **Профили загрузки**
+  - Возможность сохранить текущий список и порядок включенных модов в отдельный файл конфигурации `.cfg`
+  - Быстрая загрузка сохраненных профилей для тестирования различных сборок без изменения основного `mods.cfg`
 
-- **Backup & restore**
-  - Manual backup of `mods.cfg` to any location
-  - Automatic backup with timestamp when choosing "Save with backup"
+- **Резервное копирование и восстановление**
+  - Ручное создание бэкапа файла `mods.cfg` в любое выбранное место на диске
+  - Автоматическое создание резервной копии с временной меткой в названии при выборе опции «Сохранить с бэкапом»
 
-- **Search and navigation**
-  - Quick search by mod name and by title from `.info` (highlight matches)
-  - ▲▼ buttons to navigate through search results
+- **Поиск и навигация**
+  - Быстрый поиск модов по имени файла или по названию из файла `.info` с подсветкой совпадений
+  - Удобные кнопки ▲▼ для быстрой навигации по результатам поиска в списке
 
-- **Localization**
-  - Russian and English languages (toggle button in top‑right corner)
+- **Локализация**
+  - Полная поддержка русского и английского языков с возможностью мгновенного переключения кнопкой в верхнем правом углу
 
-- **Full diagnostics**
-  - Diagnostic window with paths to game, number of mods, duplicates, etc.
+- **Полная диагностика**
+  - Отдельное окно диагностики, показывающее точные пути к игре, общее количество модов, обнаруженные дубликаты и ошибки
 
-- **Launch game**
-  - One-click launch Kenshi via Steam (with authentication) or directly
+## 📥 Установка
 
-## 📥 Installation
+### Готовый скомпилированный файл (Рекомендуется)
 
-### Pre‑built binary (recommended)
+1. Перейдите на страницу [Releases (Релизы)](https://github.com/p4vl0-dev/kenshi-simple-mod-manager/releases)
+2. Скачайте актуальную версию файла `KenshiSimpleModManager.exe`
+3. Поместите скачанный файл в любую удобную папку на компьютере (его не обязательно класть в корень игры)
+4. Запустите `KenshiSimpleModManager.exe`
 
-1. Go to the [Releases page](https://github.com/p4vl0-dev/kenshi-simple-mod-manager/releases)
-2. Download `KenshiSimpleModManager.exe`
-3. Place it in any folder (does not have to be next to the game)
-4. Run `KenshiSimpleModManager.exe`
+> **Важно:** При первом запуске программа попытается найти папку Kenshi автоматически через реестр Steam и стандартные пути на дисках. Если автопоиск не сработает, вы сможете указать путь к игре вручную через меню **Вид → Задать путь к Kenshi**.
 
-> **Important:** On first launch, the program will attempt to find Kenshi automatically (via Steam registry and standard paths). If it fails, you can manually set the path via **View → Set Kenshi path**.
+## 🔧 Сборка из исходного кода
 
-## 🔧 Building from source
+### Системные требования
+- Python версии 3.6 или выше
+- Библиотека PyQt5
+- Библиотека PyInstaller
 
-### Requirements
-- Python 3.6+
-- PyQt5
-- PyInstaller
-
-### Steps
-1. Clone the repository:
+### Инструкция по сборке
+1. Склонируйте репозиторий к себе на компьютер:
    ```bash
-   git clone https://github.com/p4vl0-dev/kenshi-simple-mod-manager.git
+   git clone https://github.com
    cd kenshi-simple-mod-manager
    ```
-2. Install dependencies:
+2. Установите необходимые для работы библиотеки:
    ```bash
    pip install PyQt5
    pip install pyinstaller
    ```
-3. Ensure that the icons and fonts folders are in the project root (containing the required files).
-4. Build the executable:
+3. Убедитесь, что папки `icons` (с иконками интерфейса) и `fonts` (со шрифтами) находятся в корне проекта и содержат все нужные файлы ресурсы.
+4. Запустите компиляцию исполняемого файла:
    ```bash
    pyinstaller --onefile --windowed --clean --name KenshiSimpleModManager --icon=icons/ksmm.ico --version-file=version.txt --add-data "icons;icons" --add-data "fonts;fonts" kenshi_simple_mod_manager.py
    ```
-The finished KenshiSimpleModManager.exe will appear in the dist folder.
+После завершения процесса готовый к работе файл `KenshiSimpleModManager.exe` появится в созданной папке `dist/`.
 
-## 📁 Project structure
+## 📁 Структура проекта
 
 ```text
 kenshi-simple-mod-manager/
-├── kenshi_simple_mod_manager.py   # Main script
-├── icons/                         # Icons for the interface
-│   ├── ksmm.ico                   # Application icon
-│   ├── steam_tray.ico             # Steam icon
-│   ├── folder.webp                # Folder icon (local mods)
-│   ├── warning.webp               # Warning icon (duplicates/errors)
-│   └── github.webp                # GitHub icon
-├── fonts/                         # Fonts (optional)
+├── kenshi_simple_mod_manager.py   # Главный скрипт приложения
+├── icons/                         # Иконки и графические ресурсы интерфейса
+│   ├── ksmm.ico                   # Главная иконка приложения
+│   ├── steam_tray.ico             # Иконка Steam
+│   ├── folder.webp                # Иконка папки (локальные моды)
+│   ├── warning.webp               # Иконка предупреждения (ошибки/дубликаты)
+│   └── github.webp                # Иконка GitHub
+├── fonts/                         # Кастомные шрифты (опционально)
 │   ├── Kenshi.ttf
 │   └── Exo2-Bold.ttf
 └── README.md
 ```
 
-## 📜 License
+## 📜 Лицензия
 
-This project is distributed under the MIT license.  
-In short: you may use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software without restriction, provided that the copyright notice is retained. See the LICENSE file for details.
+Этот проект распространяется под свободной лицензией MIT.  
 
-## 🛠️ Support
+## 🛠️ Поддержка и обратная связь
 
-If you find a bug or have a suggestion, create an [Issue](https://github.com/p4vl0-dev/kenshi-simple-mod-manager/issues).
+Если вы обнаружили баг, столкнулись с ошибкой или хотите предложить новую функцию, пожалуйста, создайте [Issue](https://github.com/p4vl0-dev/kenshi-simple-mod-manager/issues) в репозитории проекта.
