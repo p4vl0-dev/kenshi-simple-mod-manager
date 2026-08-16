@@ -1627,9 +1627,8 @@ class ModManager(QMainWindow):
             disabled_ordered = sorted(disabled_list)
             self.enabled_list = enabled_ordered
             self.disabled_list = disabled_ordered
-            self.original_enabled_list = enabled_ordered[:]
             self.build_list(enabled_ordered, disabled_ordered)
-            self.modified = False
+            self.modified = True
             self.update_save_button()
             self.statusBar().showMessage(self.str['status_cfg_loaded'].format(file_path))
         except Exception as e:
