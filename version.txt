@@ -1,5 +1,5 @@
 VSVersionInfo(
-  ffi=FixedFileInfo(filevers=(1, 0, 0, 1), prodvers=(1, 0, 0, 1)),
+  ffi=FixedFileInfo(filevers=(1, 0, 1, 0), prodvers=(1, 0, 1, 0)),
   kids=[
     StringFileInfo([
       StringTable('041904b0', [
