@@ -1,11 +1,11 @@
 VSVersionInfo(
-  ffi=FixedFileInfo(filevers=(1, 0, 0, 0), prodvers=(1, 0, 0, 0)),
+  ffi=FixedFileInfo(filevers=(1, 0, 0, 1), prodvers=(1, 0, 0, 1)),
   kids=[
     StringFileInfo([
       StringTable('041904b0', [
         StringStruct('FileDescription', 'Kenshi Simple Mod Manager'),
-        StringStruct('FileVersion', '1.0.0'),
-        StringStruct('ProductVersion', '1.0.0')
+        StringStruct('FileVersion', '1.0.0.1'),
+        StringStruct('ProductVersion', '1.0.0.1')
       ])
     ]),
     VarFileInfo([VarStruct('Translation', [1049, 1200])])
