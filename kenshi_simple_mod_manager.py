@@ -1906,29 +1906,40 @@ class ModManager(QMainWindow):
     # ========== Проверка обновлений ==========
     def check_for_updates(self):
         """Проверяет наличие обновлений на GitHub."""
-        exe_path = sys.argv[0]
-        current_version = get_file_version(exe_path)
-        if current_version is None:
+        current_version = self.current_version
+        if current_version == "dev":
+            # Если версия не определена (запуск из скрипта), можно пропустить проверку
+            # или использовать фиксированную версию, например "1.0.0"
+            # Для отладки можно раскомментировать следующую строку:
+            # current_version = "0.9.0"
             return
 
         self.manager = QNetworkAccessManager()
         url = QUrl("https://api.github.com/repos/p4vl0-dev/kenshi-simple-mod-manager/releases/latest")
         request = QNetworkRequest(url)
+        # GitHub API требует User-Agent
+        request.setHeader(QNetworkRequest.UserAgentHeader, "KenshiSimpleModManager/1.0")
         reply = self.manager.get(request)
 
         def handle_reply():
-            if reply.error() == QNetworkReply.NoError:
-                data = reply.readAll().data().decode('utf-8')
-                try:
+            try:
+                if reply.error() == QNetworkReply.NoError:
+                    data = reply.readAll().data().decode('utf-8')
                     release = json.loads(data)
                     latest_tag = release.get('tag_name', '')
                     if latest_tag.startswith('v'):
                         latest_tag = latest_tag[1:]
                     if latest_tag and compare_versions(latest_tag, current_version) > 0:
                         self.show_update_dialog(latest_tag)
-                except Exception:
+                else:
+                    # Ошибка сети – можно вывести в статус-бар для отладки
+                    # self.statusBar().showMessage("Ошибка проверки обновлений")
                     pass
-            reply.deleteLater()
+            except Exception as e:
+                # Ошибка парсинга – ничего не делаем
+                pass
+            finally:
+                reply.deleteLater()
 
         reply.finished.connect(handle_reply)
 
